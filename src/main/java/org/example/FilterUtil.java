@@ -13,22 +13,22 @@ public class FilterUtil {
     public String stringsFile = "strings.txt";
 
 
-    public void saveInt(List<Long> integersList) throws Exception {
+    public void saveInt(List<Long> integersList, boolean isAppending) throws Exception {
         if (integersList.size() != 0) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(integersFile))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(integersFile, isAppending))) {
                 for (Long number : integersList) {
-                    writer.write(number.toString() + "\n");
+                    writer.write(number.toString());
+                    writer.newLine();
                 }
-
             } catch (IOException e) {
                 throw new Exception("Ошибка в сохранении в файл.");
             }
         }
     }
 
-    public void saveStr(List<String> stringsList) throws Exception {
+    public void saveStr(List<String> stringsList, boolean isAppending) throws Exception {
         if (stringsList.size() != 0) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(stringsFile))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(stringsFile, isAppending))) {
                 for (String word : stringsList) {
                     if (!word.isEmpty()) {
                         writer.write(word + "\n");
@@ -40,9 +40,9 @@ public class FilterUtil {
         }
     }
 
-    public void saveFloats(List<Float> floatsList) throws Exception {
+    public void saveFloats(List<Float> floatsList, boolean isAppending) throws Exception {
         if (floatsList.size() != 0) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(floatsFile))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(floatsFile, isAppending))) {
 
                 for (Float flnumber : floatsList) {
                     writer.write(flnumber.toString() + "\n");
@@ -59,16 +59,22 @@ public class FilterUtil {
             for (String file : files) {
                 FileInputStream inputStream = new FileInputStream(file);
                 Scanner scanner = new Scanner(inputStream);
-                while (scanner.hasNextLine()) {
+                while (scanner.hasNext()) {
+
                     if (scanner.hasNextLong()) {
                         Long number = scanner.nextLong();
                         integersList.add(number);
+
+
                     } else if (scanner.hasNextFloat()) {
                         float number = scanner.nextFloat();
                         floatsList.add(number);
+
                     } else if (scanner.hasNextLine()) {
                         String string = scanner.nextLine();
-                        stringsList.add(string);
+                        if (!string.isEmpty()) {
+                            stringsList.add(string);
+                        }
                     } else {
                         scanner.next();
                     }
@@ -80,9 +86,13 @@ public class FilterUtil {
         } catch (IOException exc) {
             throw new FileNotFoundException("Файл не прочитан");
         }
-        saveInt(integersList);
-        saveFloats(floatsList);
-        saveStr(stringsList);
+
+    }
+
+    public void saveAllData(boolean isAppending) throws Exception {
+        saveInt(integersList, isAppending);
+        saveFloats(floatsList, isAppending);
+        saveStr(stringsList, isAppending);
     }
 
     public void changeFilesNames(String prefix) {
@@ -109,8 +119,8 @@ public class FilterUtil {
     }
 
     public void printStringFullStat() {
-        int sizeOfLongest = 0;
-        int sizeOfShortest = 0;
+        int sizeOfLongest = Integer.MIN_VALUE;
+        int sizeOfShortest = Integer.MAX_VALUE;
         if (stringsList.size() != 0) {
             for (String s : stringsList) {
                 if (sizeOfShortest > s.length()) {
@@ -121,10 +131,11 @@ public class FilterUtil {
                 }
             }
         }
-        System.out.println("Количество: " + stringsList.size()); // todo why 10
-        System.out.println("Размер самой короткой строки: " + sizeOfShortest); // todo wrong number
+        System.out.println("Количество: " + stringsList.size());
+        System.out.println("Размер самой короткой строки: " + sizeOfShortest);
         System.out.println("Размер самой длинной строки: " + sizeOfLongest);
     }
+
     public void printIntFullStat() {
         long sum = 0;
         long average = 0;
@@ -157,7 +168,9 @@ public class FilterUtil {
 
     public static void main(String[] args) throws Exception {
         FilterUtil filterUtil = new FilterUtil();
+        //   String[] arguments = {"-p", "result_", "-s", "-f", "-a", "in1.txt", "in2.txt"};
         String[] arguments = {"-p", "result_", "-s", "-f", "in1.txt", "in2.txt"};
+        boolean isAppending = false; // По умолчанию файлы результатов перезаписываются.
 
         if (arguments.length == 0) {
             throw new RuntimeException("Arguments needed.");
@@ -169,11 +182,13 @@ public class FilterUtil {
                 } else if (arguments[i].equals("-o")) {
                     // todo Дополнительно с помощью опции -o нужно уметь задавать путь для результатов
                 } else if (arguments[i].equals("-a")) {
-                    // todo По умолчанию файлы результатов перезаписываются. С помощью опции -a можно задать режим добавления в существующие файлы.
+                    isAppending = true; //  С помощью опции -a можно задать режим добавления в существующие файлы.
+
                 } else if (arguments[i].contains(".txt")) {
                     List<String> files = new ArrayList<>();
                     files.add(arguments[i]);
                     filterUtil.load(files);
+                    filterUtil.saveAllData(isAppending);
                 }
             }
             // запускаем цикл для статистики

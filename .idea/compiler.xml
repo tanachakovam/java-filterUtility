@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="sort-it" />
         <module name="java-filterUtility" />
+        <module name="java-filterUtility_first" />
         <module name="Merge_sort" />
         <module name="ШИФТ 2024" />
         <module name="java-filtrUtility" />
@@ -18,6 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Merge_sort" options="--add-modules java.base" />
       <module name="java-filterUtility" options="--add-modules java.base" />
+      <module name="java-filterUtility_first" options="--add-modules java.base" />
       <module name="java-filtrUtility" options="--add-modules java.base" />
       <module name="ШИФТ 2024" options="--add-modules java.base" />
     </option>

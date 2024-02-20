@@ -1,15 +1,21 @@
 package org.example;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
-public class FilterUtil {
+public class FilterUtility {
     public List<Long> integersList = new ArrayList<>();
     public List<Float> floatsList = new ArrayList<>();
     public List<String> stringsList = new ArrayList<>();
 
     public String integersFile = "integers.txt";
     public String floatsFile = "floats.txt";
+
+
     public String stringsFile = "strings.txt";
 
 
@@ -31,9 +37,11 @@ public class FilterUtil {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(stringsFile, isAppending))) {
                 for (String word : stringsList) {
                     if (!word.isEmpty()) {
-                        writer.write(word + "\n");
+                        writer.write(word);
+                        writer.newLine();
                     }
                 }
+
             } catch (IOException e) {
                 throw new Exception("Ошибка в сохранении в файл.");
             }
@@ -44,8 +52,8 @@ public class FilterUtil {
         if (floatsList.size() != 0) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(floatsFile, isAppending))) {
 
-                for (Float flnumber : floatsList) {
-                    writer.write(flnumber.toString() + "\n");
+                for (Float number : floatsList) {
+                    writer.write(number.toString() + "\n");
                 }
 
             } catch (IOException e) {
@@ -96,10 +104,25 @@ public class FilterUtil {
     }
 
     public void changeFilesNames(String prefix) {
-        integersFile = prefix + integersFile;
         floatsFile = prefix + floatsFile;
+        integersFile = prefix + integersFile;
         stringsFile = prefix + stringsFile;
 
+    }
+
+    public void moveFiles(String path) {
+        Path targetFloats = Paths.get(path + "/" + floatsFile);
+        Path targetIntegers = Paths.get(path + "/" + integersFile);
+        Path targetStrings = Paths.get(path + "/" + stringsFile);
+
+        try {
+            Files.move(Paths.get(floatsFile), targetFloats, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(Paths.get(integersFile), targetIntegers, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(Paths.get(stringsFile), targetStrings, StandardCopyOption.REPLACE_EXISTING);
+
+        } catch (IOException e) {
+            System.out.println("Failed to change the file path.");
+        }
     }
 
     public void printShortStats() {
@@ -166,10 +189,10 @@ public class FilterUtil {
         System.out.println("Сумма = " + sum);
     }
 
+
     public static void main(String[] args) throws Exception {
-        FilterUtil filterUtil = new FilterUtil();
-        //   String[] arguments = {"-p", "result_", "-s", "-f", "-a", "in1.txt", "in2.txt"};
-        String[] arguments = {"-p", "result_", "-s", "-f", "in1.txt", "in2.txt"};
+        FilterUtility filterUtil = new FilterUtility();
+        String[] arguments = {"-p", "result_", "-o", "src/main/java", "-s", "-a", "-f", "in1.txt", "in2.txt"};
         boolean isAppending = false; // По умолчанию файлы результатов перезаписываются.
 
         if (arguments.length == 0) {
@@ -177,28 +200,34 @@ public class FilterUtil {
         } else {
             for (int i = 0; i < arguments.length; i++) {
                 // Опция -p задает префикс имен выходных файлов.
-                if (arguments[i].equals("-p")) {
-                    filterUtil.changeFilesNames(arguments[++i]);
-                } else if (arguments[i].equals("-o")) {
-                    // todo Дополнительно с помощью опции -o нужно уметь задавать путь для результатов
-                } else if (arguments[i].equals("-a")) {
-                    isAppending = true; //  С помощью опции -a можно задать режим добавления в существующие файлы.
-
-                } else if (arguments[i].contains(".txt")) {
+                if (arguments[i].contains(".txt")) {
                     List<String> files = new ArrayList<>();
                     files.add(arguments[i]);
                     filterUtil.load(files);
-                    filterUtil.saveAllData(isAppending);
+
+                    // С помощью опции -a можно задать режим добавления в существующие файлы.
+                } else if (arguments[i].equals("-a")) {
+                    isAppending = true;
+
+                } else if (arguments[i].equals("-p")) {
+                    filterUtil.changeFilesNames(arguments[++i]);
+
+                    // C помощью опции -o нужно уметь задавать путь для результатов.
+                } else if (arguments[i].equals("-o")) {
+                    filterUtil.moveFiles(arguments[++i]);
                 }
+
             }
-            // запускаем цикл для статистики
+            // Запускаем цикл для статистики.
             for (String argument : arguments) {
                 if (argument.equals("-s")) {
                     filterUtil.printShortStats();
                 } else if (argument.equals("-f")) {
                     filterUtil.printFullStat();
                 }
+
             }
+            filterUtil.saveAllData(isAppending);
         }
     }
 }

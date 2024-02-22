@@ -25,6 +25,7 @@
 **Стек**:
 
 версия Java 11;
+
 система сборки - Apache Maven 4.0.0
 
 ### Инструкция по запуску:
@@ -36,4 +37,5 @@
 ### Примеры запуска из командной строки:
 
 java -jar util-jar-with-dependencies.jar -s -f in1.txt in2.txt
+
 java -jar util-jar-with-dependencies.jar -s -f -a in1.txt in2.txt in3.txt

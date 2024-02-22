@@ -19,13 +19,9 @@
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="--add-modules java.xml.bind" />
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FilterUtility" options="--add-modules java.base" />
-      <module name="Merge_sort" options="--add-modules java.base" />
-      <module name="java-filterUtility" options="--add-modules java.base" />
-      <module name="java-filterUtility_first" options="--add-modules java.base" />
-      <module name="java-filtrUtility" options="--add-modules java.base" />
-      <module name="ШИФТ 2024" options="--add-modules java.base" />
+      <module name="FilterUtility" options="" />
     </option>
   </component>
 </project>

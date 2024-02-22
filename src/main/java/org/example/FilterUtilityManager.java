@@ -114,8 +114,6 @@ public class FilterUtilityManager implements FilterManager {
         floatsFile = prefix + floatsFile;
         integersFile = prefix + integersFile;
         stringsFile = prefix + stringsFile;
-
-
     }
 
     @Override

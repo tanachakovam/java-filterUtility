@@ -16,10 +16,10 @@ public class Statistics extends FilterUtilityManager {
     public void printFullStat() {
         System.out.println("Полная статистика для целых чисел: ");
         printIntFullStat();
-        System.out.println("Полная статистика для дробных чисел: ");
-        printFloatFullStat();
         System.out.println("Полная статистика для строк: ");
         printStringFullStat();
+        System.out.println("Полная статистика для дробных чисел: ");
+        printFloatFullStat();
     }
 
     public void printStringFullStat() {

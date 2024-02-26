@@ -5,13 +5,11 @@ import java.util.List;
 public interface FilterManager {
     void saveAllData(boolean isAppending) throws Exception;
 
-    void saveInt(List<Long> integersList, boolean isAppending) throws Exception;
+    void saveData(List<Object> list, Object file, boolean isAppending) throws Exception;
 
-    void saveFloats(List<Float> floatsList, boolean isAppending) throws Exception;
+    void moveAllFiles(String path);
 
-    void saveStr(List<String> stringsList, boolean isAppending) throws Exception;
-
-    void moveFiles(String path);
+    void moveFile(String path, Object file);
 
     void changeFilesNames(String prefix);
 

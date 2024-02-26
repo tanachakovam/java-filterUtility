@@ -30,7 +30,7 @@ public class Parser {
 
                     // C помощью опции -o нужно уметь задавать путь для результатов.
                 } else if (args[i].equals("-o")) {
-                    filterUtil.moveFiles(args[++i]);
+                    filterUtil.moveAllFiles(args[++i]);
                 }
 
             }

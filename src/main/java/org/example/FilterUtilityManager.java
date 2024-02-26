@@ -57,17 +57,17 @@ public class FilterUtilityManager implements FilterManager {
 
     @Override
     public void saveAllData(boolean isAppending) throws Exception {
-        saveInt(integersList, isAppending);
-        saveFloats(floatsList, isAppending);
-        saveStr(stringsList, isAppending);
+        saveData(new ArrayList<>(integersList), integersFile, isAppending);
+        saveData(new ArrayList<>(floatsList), floatsFile, isAppending);
+        saveData(new ArrayList<>(stringsList), stringsFile, isAppending);
     }
 
     @Override
-    public void saveInt(List<Long> integersList, boolean isAppending) throws Exception {
-        if (integersList.size() != 0) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(integersFile, isAppending))) {
-                for (Long number : integersList) {
-                    writer.write(number.toString());
+    public void saveData(List<Object> list, Object file, boolean isAppending) throws Exception {
+        if (list.size() != 0) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(String.valueOf(file), isAppending))) {
+                for (Object object : list) {
+                    writer.write(object.toString());
                     writer.newLine();
                 }
             } catch (IOException e) {
@@ -77,39 +77,6 @@ public class FilterUtilityManager implements FilterManager {
     }
 
     @Override
-    public void saveStr(List<String> stringsList, boolean isAppending) throws Exception {
-        if (stringsList.size() != 0) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(stringsFile, isAppending))) {
-                for (String word : stringsList) {
-                    if (!word.isEmpty()) {
-                        writer.write(word);
-                        writer.newLine();
-                    }
-                }
-
-            } catch (IOException e) {
-                throw new Exception("Ошибка в сохранении в файл.");
-            }
-        }
-    }
-
-    @Override
-    public void saveFloats(List<Float> floatsList, boolean isAppending) throws Exception {
-        if (floatsList.size() != 0) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(floatsFile, isAppending))) {
-
-                for (Float number : floatsList) {
-                    writer.write(number.toString() + "\n");
-                }
-
-            } catch (IOException e) {
-                throw new Exception("Ошибка в сохранении в файл.");
-            }
-        }
-    }
-
-
-    @Override
     public void changeFilesNames(String prefix) {
         floatsFile = prefix + floatsFile;
         integersFile = prefix + integersFile;
@@ -117,19 +84,19 @@ public class FilterUtilityManager implements FilterManager {
     }
 
     @Override
-    public void moveFiles(String path) {
-        Path targetFloats = Paths.get(path + "/" + floatsFile);
-        Path targetIntegers = Paths.get(path + "/" + integersFile);
-        Path targetStrings = Paths.get(path + "/" + stringsFile);
+    public void moveAllFiles(String path) {
+        moveFile(path, floatsFile);
+        moveFile(path, integersFile);
+        moveFile(path, stringsFile);
+    }
 
+    @Override
+    public void moveFile(String path, Object file) {
+        Path targetFile = Paths.get(path + "/" + file);
         try {
-            Files.move(Paths.get(floatsFile), targetFloats, StandardCopyOption.REPLACE_EXISTING);
-            Files.move(Paths.get(integersFile), targetIntegers, StandardCopyOption.REPLACE_EXISTING);
-            Files.move(Paths.get(stringsFile), targetStrings, StandardCopyOption.REPLACE_EXISTING);
-
+            Files.move(Paths.get(floatsFile), targetFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             System.out.println("Failed to change the file path.");
         }
     }
-
 }

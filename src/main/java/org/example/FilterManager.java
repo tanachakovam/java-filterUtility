@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface FilterManager {
@@ -13,6 +14,8 @@ public interface FilterManager {
 
     void changeFilesNames(String prefix);
 
-    void filterFilesData(List<String> files) throws Exception;
+    void filterFilesData() throws Exception;
+
+    void save(List<String> files) throws IOException;
 
 }

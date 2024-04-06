@@ -1,11 +1,14 @@
 package org.example;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
+
     Statistics statistics = new Statistics();
-    FilterUtilityManager filterUtil = new FilterUtilityManager();
+    FilterUtilityManager filterUtil = new FilterUtilityManager(new File("common.txt"));
+
 
     public boolean parse(String[] args) throws Exception {
         boolean isAppending = false; // По умолчанию файлы результатов перезаписываются.
@@ -18,7 +21,8 @@ public class Parser {
                 if (args[i].contains(".txt")) {
                     List<String> files = new ArrayList<>();
                     files.add(args[i]);
-                    filterUtil.filterFilesData(files);
+                    filterUtil.save(files);
+                    filterUtil.filterFilesData();
 
                     // С помощью опции -a можно задать режим добавления в существующие файлы.
                 } else if (args[i].equals("-a")) {
@@ -49,4 +53,14 @@ public class Parser {
 
         }
     }
+
+    public void checkIfArgsCorrect(String[] args) {
+        List<String> arguments = new ArrayList<>(List.of(args));
+        if (arguments.contains("-s") & arguments.contains("-f")) {
+            throw new RuntimeException("args are incorrect. You can not use -s and -f args together.");
+        }
+
+    }
+
+
 }

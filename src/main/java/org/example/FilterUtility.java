@@ -6,6 +6,7 @@ public class FilterUtility {
         Parser parser = new Parser();
         FilterUtilityManager utilityManager = new FilterUtilityManager();
 
+        parser.checkIfArgsCorrect(args);
         boolean isAppending = parser.parse(args);
         utilityManager.saveAllData(isAppending);
         parser.checkNeededStat(args);

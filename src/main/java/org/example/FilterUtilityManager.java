@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class FilterUtilityManager implements FilterManager {
 
     protected static List<Long> integersList = new ArrayList<>();
@@ -18,41 +19,60 @@ public class FilterUtilityManager implements FilterManager {
     protected static String integersFile = "integers.txt";
     protected static String floatsFile = "floats.txt";
     protected static String stringsFile = "strings.txt";
+    private File file;
 
+    public FilterUtilityManager(File file) {
+        this.file = file;
+    }
+
+    public FilterUtilityManager() {
+
+    }
+
+    // метод сохраняет все данные в указанный файл
     @Override
-    public void filterFilesData(List<String> files) throws Exception {
-        try {
+    public void save(List<String> files) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
             for (String file : files) {
                 FileInputStream inputStream = new FileInputStream(file);
                 Scanner scanner = new Scanner(inputStream);
 
                 while (scanner.hasNext()) {
-
-                    if (scanner.hasNextLong()) {
-                        Long number = scanner.nextLong();
-                        integersList.add(number);
-
-
-                    } else if (scanner.hasNextFloat()) {
-                        float number = scanner.nextFloat();
-                        floatsList.add(number);
-
-                    } else if (scanner.hasNextLine()) {
-                        String string = scanner.nextLine();
-                        if (!string.isEmpty()) {
-                            stringsList.add(string);
-                        }
-                    } else {
-                        scanner.next();
-                    }
+                    writer.write(scanner.nextLine());
+                    writer.write("\n");
                 }
-
                 scanner.close();
             }
-
-        } catch (IOException exc) {
-            throw new FileNotFoundException("Файл не прочитан");
+        } catch (IOException e) {
+            throw new FileNotFoundException("Ошибка в сохранении в файл.");
         }
+    }
+
+    @Override
+    public void filterFilesData() throws Exception {
+        FileInputStream inputStream = new FileInputStream(file);
+        Scanner scanner = new Scanner(inputStream);
+
+        while (scanner.hasNext()) {
+            if (scanner.hasNextLong()) {
+                Long number = scanner.nextLong();
+                integersList.add(number);
+
+            } else if (scanner.hasNextFloat()) {
+                float number = scanner.nextFloat();
+                floatsList.add(number);
+
+            } else if (scanner.hasNextLine()) {
+                String string = scanner.nextLine();
+                if (!string.isEmpty()) {
+                    stringsList.add(string);
+                }
+            } else {
+                scanner.next();
+            }
+        }
+
+        scanner.close();
     }
 
     @Override
